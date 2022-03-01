@@ -1,0 +1,254 @@
+class Main < Element
+  def title = "Marcelle Rusu - The Cost of Abstraction"
+  def style(_, _, _) = "
+    display: flex;
+    flex-direction: column;
+    padding: 2em;
+    background: #f8f8ff;
+    font-family: 'Zen Kaku Gothic Antique', sans-serif;
+    a {
+      color: black;
+      font-style: italic;
+      &:focus {
+        color: purple;
+      }
+      &:hover {
+        color: grey;
+      }
+    }
+    hr {
+      width: 100%;
+      display: block;
+      border-top: 0.5px solid black;
+    }
+    h1 {
+      text-align: center;
+    }
+    header {
+      display: flex;
+      justify-content: space-between;
+    }
+    p {
+      font-weight: bolder;
+    }
+    pre {
+      width: 60%;
+      margin-left: 20%;
+      background: white;
+    }
+    .middle {
+      text-align: center;
+    }
+    .bold {
+      font-weight: 1000;
+      font-size: 1.5em;
+    }
+  "
+
+  def view(_, _, _)
+    <div>
+      <h1>
+        The Cost of Abstraction
+      </h1>
+      <header>
+        <div class_name="date">
+          {"February 28, 2022"}
+        </div>
+        <div>
+          Marcelle Rusu
+        </div>
+      </header>
+      <hr/>
+      <p>
+        {"
+        Programming is hard to get right. This is a fact we should embrace, & not try to hide.
+        "}
+      </p>
+      <p>
+        {"
+        Whether its making a web-app from the ground up, dealing with messy APIs, handling a tricky css edge-case, or designing your own language. You will have to think about the problem, you will have to research, and you will have come up with a set of steps to address the concern at hand. These problems don't go away by minimizing character count of your program, or encoding them in a compile-time system like types.
+        "}
+      </p>
+      <p>
+        {"
+        When you face an issue in your code - something is duplicated, something is 'gross' (TODO), etc. I argue the prime goal is to create maintainable code. To me, this means ease to understand AND update. 
+        "}
+      </p>
+      <h2 id="maintainable">{"# Maintainable"}</h2>
+      <p>
+        {"
+        We all know that maintainability matters for software design. Whether its because developers on a project can change, or because design choices early on can hurt later on, being able to still make quick & effective changes to your software is what enables long-term success.
+        "}
+      </p>
+      <p>
+        {"
+        That being said, I don't think as an industry we "}<em>really</em>{" know what it means for software to be maintainable. For example, maintainable often gets conflated with 'using the correct design patterns'. There are 2 problems with this as I see it
+        "}
+        <ul>
+          <li>
+            Of the design patterns that apply, which one should I use?
+            <ul>
+              <li>
+                Object Oriented vs Procedural vs Functional
+              </li>
+              <li>
+                Composition vs Inheritance
+              </li>
+              <li>
+                TODO
+              </li>
+              <li>
+                Etc.
+              </li>
+            </ul>
+          </li>
+          <li>
+            At what point does the pattern start to work against your current example.
+          </li>
+        </ul>
+        The first point is what we mostly focus on & for good reason, we should develop these ideas further. That being said, I {" don't"} believe its the primary cause of poor design. Rather its a lack of discipline in knowing when to stop following where the abstraction leads. This is also a form of ideology which limits your ability to see the beauty in what could be considered competeting design patterns.
+      </p>
+      <h2 id="cognitive-load">{"# Cognitive Load"}</h2>
+      <p>
+        <a href="https://en.wikipedia.org/wiki/Cognitive_load" target="_blank">Cognitive load theory</a> {" "} shows us that our working memory is limited & more importantly that we can easily overload our working memory, which can turn into mild-to-extreme burnout. In practice I found this to mean that when I hit a wall I can easily conflate my failure to tackle the issue in one go with my inherent ability as a developer.
+      </p>
+      <p class_name="middle bold">
+        This is wrong.
+      </p>
+      <p>
+        {"The takeaways I've learned is the following:"}
+        <ul>
+          <li>
+            Breaking large tasks down into small bite-sized chunks is a HUGE skill, & one that we do not talk about enough. It is not easy & it is life-changing.
+          </li>
+          <li>
+            Getting overwhelmed has nothing to do with your smartness! Say that again.
+          </li>
+        </ul>
+      </p>
+      <h2 id="example">{"# Examples"}</h2>
+      <p>
+        {"
+        We'll take a look at 3 different examples to see how different abstractions affect cognitive load & maintainability.
+        "}
+      </p>
+      <h3 id="declarative-programming">{"# Declarative Programming"}</h3>
+      <p>
+        {"
+        Let's take the common scrutinized example of Array.reduce vs a for loop
+        "}
+      </p>
+
+      <pre>
+        {"
+  // Array#reduce
+  const oldHeaders = [['Key', 'value'], ..];
+
+  oldHeaders.reduce((headers, ([key, value]) => 
+    ({...headers, [key]: value })
+  ));
+        "}
+      </pre>
+      <p class_name="middle">Verus</p>
+      <pre>
+        {"
+  // regular old for loop
+  const oldHeaders = [['Key', 'value'], ..];
+
+  const headers = {};
+  for (let [key, value] of oldHeaders) {
+    headers[key] = value;
+  }
+        "}
+      </pre>
+      <p>
+        {"
+        This is a bit of a contrived example (because I can't think of a good use case for reduce..), but it is something I wrote before & felt very clever about it.
+        "}
+      </p>
+      <p>
+        I want to tackle this not in a design principles way, but with cognitive load in mind.
+      </p>
+      <p>
+        {"Let's see what mental steps I take to parse & interpret."}
+        <ol>
+          <li>
+            Reduce is a way to transform a collection into something else, lets try it out!
+          </li>
+          <li>
+            {"
+            It takes a callback, the first argument is what again? Oh right, its what we are transforming into. I guess we're making headers?
+            "}
+          </li>
+          <li>
+            {"
+            Right, we have to return back a partially made version of the collection we are creating. I wish I had something like Object.immutablePush.. ok whatever I'll just use spread.
+            "}
+          </li>
+          <li>
+            {"
+            Spreading has order in it, so always make sure to spread first or else your new value could get overridden.
+            "}
+          </li>
+          <li>
+            {"
+            All done!
+            "}
+          </li>
+        </ol>
+      </p>
+      <p>
+        {"
+        I'll admit some of this is a bit trivial, but I think it's worth mentioning. 
+        "}
+      </p>
+      <p>
+        To me the key parts are:
+        <ol>
+          <li>
+            The cost of a function with multiple parameters
+          </li>
+          <li>
+            The cost of declarative thinking 
+          </li>
+        </ol>
+      </p>
+      <p>
+        In contrast, lets take that good old for loop.
+        <ol>
+          <li>
+            Looks like {" I'll"} be getting the result of this in an object called "headers"
+          </li>
+          <li>
+            {"
+            Destructure key - value from oldHeaders (order matters!)
+            "}
+          </li>
+          <li>
+            {"
+            Assign headers[key] to the value
+            "}
+          </li>
+          <li>
+            {"
+            All done!
+            "}
+          </li>
+        </ol>
+      </p>
+
+      <p>
+        The biggest issue with declarative programming is exactly what sold me on it. You have to have the entire problem in your head to be able to start writing it. Likewise, you have to have the entire piece of code in your head before you can begin to understand it.
+      </p>
+      <p>
+        I actually found this to make me a better programmer - think about the problem before you do it.
+      </p>
+      <p>
+        Unforunately I found a common issue in practice - you {" don't"} have an easy  point where your mind can pause half-way through a transformation & think about what you are doing. You are deep in callbacks & object/array spreads which undeniably increases cognitive load.
+      </p>
+      <p>
+        So to go back to the example above, even though {"there's"} only {" 1 "} extra step, I find in practice I end up having to hold a lot more steps in my head at the same time.
+      </p>
+    </div>
+  end
+end
