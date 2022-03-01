@@ -1596,11 +1596,11 @@ class CodeHighlighter extends Element {
   view(...params) {
   return Schema.case(List.new(params),
     List.new([
-      List.new([Schema.for(List.new([Schema.any(Sym.new("_56109")), Schema.any(Sym.new("_56110")), Schema.any(Sym.new("_56111"))])), ((__VALUE) => {
-    let _56109, _56110, _56111;
-    _56109 = __VALUE.__lookup__(Int.new(0));
-    _56110 = __VALUE.__lookup__(Int.new(1));
-    _56111 = __VALUE.__lookup__(Int.new(2));
+      List.new([Schema.for(List.new([Schema.any(Sym.new("_4455")), Schema.any(Sym.new("_4456")), Schema.any(Sym.new("_4457"))])), ((__VALUE) => {
+    let _4455, _4456, _4457;
+    _4455 = __VALUE.__lookup__(Int.new(0));
+    _4456 = __VALUE.__lookup__(Int.new(1));
+    _4457 = __VALUE.__lookup__(Int.new(2));
     return DomNode.new(Str.new(`script`), Record.new([
       [Sym.new("src"), Str.new(`https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js`)]
     ], List.new([])), List.new([]));
@@ -1626,11 +1626,11 @@ this.view = this.view.bind(this);this.init && this.init(...args);}
 style(...params) {
   return Schema.case(List.new(params),
     List.new([
-      List.new([Schema.for(List.new([Schema.any(Sym.new("_56112")), Schema.any(Sym.new("_56113")), Schema.any(Sym.new("_56114"))])), ((__VALUE) => {
-    let _56112, _56113, _56114;
-    _56112 = __VALUE.__lookup__(Int.new(0));
-    _56113 = __VALUE.__lookup__(Int.new(1));
-    _56114 = __VALUE.__lookup__(Int.new(2));
+      List.new([Schema.for(List.new([Schema.any(Sym.new("_4458")), Schema.any(Sym.new("_4459")), Schema.any(Sym.new("_4460"))])), ((__VALUE) => {
+    let _4458, _4459, _4460;
+    _4458 = __VALUE.__lookup__(Int.new(0));
+    _4459 = __VALUE.__lookup__(Int.new(1));
+    _4460 = __VALUE.__lookup__(Int.new(2));
     return Str.new(`
     display: flex;
     flex-direction: column;
@@ -1656,15 +1656,17 @@ style(...params) {
       text-align: center;
     }
     h2 {
+      margin-left: 10%;
       position: sticky;
       top: 1.25em;
       background: #f8f8ff;
-      width: 8em;
+      width: 10em;
       &::before {
         content: '# ';
       }
     }
     h3 {
+      margin-left: 10%;
       position: sticky;
       top: 3.75em;
       background: #f8f8ff;
@@ -1676,10 +1678,12 @@ style(...params) {
     p {
       font-weight: bolder;
       margin: 0.4em;
+      padding-left: 20%;
+      padding-right: 20%;
     }
     pre {
-      width: 60%;
-      margin-left: 20%;
+      width: 40%;
+      margin-left: 30%;
       background: white;
     }
     .middle {
@@ -1718,11 +1722,11 @@ style(...params) {
 view(...params) {
   return Schema.case(List.new(params),
     List.new([
-      List.new([Schema.for(List.new([Schema.any(Sym.new("_56115")), Schema.any(Sym.new("_56116")), Schema.any(Sym.new("_56117"))])), ((__VALUE) => {
-    let _56115, _56116, _56117;
-    _56115 = __VALUE.__lookup__(Int.new(0));
-    _56116 = __VALUE.__lookup__(Int.new(1));
-    _56117 = __VALUE.__lookup__(Int.new(2));
+      List.new([Schema.for(List.new([Schema.any(Sym.new("_4461")), Schema.any(Sym.new("_4462")), Schema.any(Sym.new("_4463"))])), ((__VALUE) => {
+    let _4461, _4462, _4463;
+    _4461 = __VALUE.__lookup__(Int.new(0));
+    _4462 = __VALUE.__lookup__(Int.new(1));
+    _4463 = __VALUE.__lookup__(Int.new(2));
     return DomNode.new(Str.new(`div`), Record.new([
 
     ], List.new([])), List.new([CodeHighlighter.new(Record.new([
@@ -1752,8 +1756,8 @@ view(...params) {
     ], List.new([])), List.new([Str.new(`
         When you face an issue in your code - something is duplicated, something is 'gross' (TODO), etc. I argue the prime goal is to create maintainable code. To me, this means ease to understand AND update. 
         `)])), DomNode.new(Str.new(`h2`), Record.new([
-      [Sym.new("id"), Str.new(`maintainable`)]
-    ], List.new([])), List.new([DomTextNode.new(Str.new(`Maintainable`))])), DomNode.new(Str.new(`p`), Record.new([
+      [Sym.new("id"), Str.new(`maintainability`)]
+    ], List.new([])), List.new([DomTextNode.new(Str.new(`Maintainability`))])), DomNode.new(Str.new(`p`), Record.new([
       [Sym.new("class_name"), Str.new(`indent`)]
     ], List.new([])), List.new([Str.new(`
         We all know that maintainability matters for software design. Whether its because developers on a project can change, or because design choices early on can hurt later on, being able to still make quick & effective changes to your software is what enables long-term success.
@@ -1885,7 +1889,16 @@ view(...params) {
 
     ], List.new([])), List.new([DomTextNode.new(Str.new(`Unforunately I found a common issue in practice - you`)), Str.new(` don't`), DomTextNode.new(Str.new(`have an easy point where your mind can pause half-way through a transformation & think about what you are doing. You are deep in callbacks & object/array spreads which undeniably increases cognitive load.`))])), DomNode.new(Str.new(`p`), Record.new([
 
-    ], List.new([])), List.new([DomTextNode.new(Str.new(`So to go back to the example above, even though`)), Str.new(`there's`), DomTextNode.new(Str.new(`only`)), Str.new(` 1 `), DomTextNode.new(Str.new(`extra step, I find in practice I end up having to hold a lot more steps in my head at the same time.`))]))]));
+    ], List.new([])), List.new([DomTextNode.new(Str.new(`So to go back to the example above, even though`)), Str.new(`there's`), DomTextNode.new(Str.new(`only`)), Str.new(` 1 `), DomTextNode.new(Str.new(`extra step, I find in practice I end up having to hold a lot more steps in my head at the same time.`))])), DomNode.new(Str.new(`h2`), Record.new([
+      [Sym.new("id"), Str.new(`leaky-abstractions`)]
+    ], List.new([])), List.new([DomTextNode.new(Str.new(`Leaky Abstractions`))])), DomNode.new(Str.new(`p`), Record.new([
+
+    ], List.new([])), List.new([DomTextNode.new(Str.new(`The core issue is whether or not the abstraction you are using is leaky or not. The perfect abstraction makes you completely forget the internals of a product. This is great & we should seek those out when possible. Most of the time though, our abstractions are very leaky. For example using mutable-looking apis for immutable data structures is obviously leaky.`)), DomNode.new(Str.new(`pre`), Record.new([
+      [Sym.new("class_name"), Str.new(`prettyprint`)]
+    ], List.new([])), List.new([Str.new(`
+  r = { a: 10 }
+  r = r.insert :b, 20
+           `)])), DomTextNode.new(Str.new(`At first this looks great, but then when you realize you have to re-assign the value at all times. This turns your mind switches to record creation, which is very different than a simple insertion.`))]))]));
   })])
     ])
   );
