@@ -1,3 +1,9 @@
+class CodeHighlighter < Element
+  def view(_, _, _)
+    <script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
+  end
+end
+
 class Main < Element
   def title = "Marcelle Rusu - The Cost of Abstraction"
   def style(_, _, _) = "
@@ -24,12 +30,27 @@ class Main < Element
     h1 {
       text-align: center;
     }
-    header {
-      display: flex;
-      justify-content: space-between;
+    h2 {
+      position: sticky;
+      top: 1.25em;
+      background: #f8f8ff;
+      width: 8em;
+      &::before {
+        content: '# ';
+      }
+    }
+    h3 {
+      position: sticky;
+      top: 3.75em;
+      background: #f8f8ff;
+      width: 14em;
+      &::before {
+        content: '## ';
+      }
     }
     p {
       font-weight: bolder;
+      margin: 0.4em;
     }
     pre {
       width: 60%;
@@ -43,25 +64,49 @@ class Main < Element
       font-weight: 1000;
       font-size: 1.5em;
     }
+    header {
+      background: #f8f8ffee;
+      width: calc(100vw - 4em);
+      position: sticky;
+      margin-left: -2em;
+      padding-left: 2em;
+      padding-right: 2em;
+      left: 0;
+      top: 0;
+      .name-and-date {
+        padding-top: 1em;
+        display: flex;
+        justify-content: space-between;
+      }
+    }
+    .no-margin {
+      margin: 0;
+    }
+    .indent {
+      text-indent: 2em;
+    }
   "
 
   def view(_, _, _)
     <div>
-      <h1>
-        The Cost of Abstraction
-      </h1>
-      <header>
-        <div class_name="date">
-          {"February 28, 2022"}
+      <CodeHighlighter />
+      <header class_name="header">
+        <h1>
+          The Cost of Abstraction
+        </h1>
+        <div class_name="name-and-date">
+          <div class_name="date">
+            {"February 28, 2022"}
+          </div>
+          <div>
+            Marcelle Rusu
+          </div>
         </div>
-        <div>
-          Marcelle Rusu
-        </div>
+        <hr/>
       </header>
-      <hr/>
-      <p>
+      <p class_name="indent">
         {"
-        Programming is hard to get right. This is a fact we should embrace, & not try to hide.
+        Programming is hard to get right. Sometimes we can effectively minimize complexity by finding shared patterns. Other times we just hide the complexity but it doesn't go away.
         "}
       </p>
       <p>
@@ -74,8 +119,8 @@ class Main < Element
         When you face an issue in your code - something is duplicated, something is 'gross' (TODO), etc. I argue the prime goal is to create maintainable code. To me, this means ease to understand AND update. 
         "}
       </p>
-      <h2 id="maintainable">{"# Maintainable"}</h2>
-      <p>
+      <h2 id="maintainable">Maintainable</h2>
+      <p class_name="indent">
         {"
         We all know that maintainability matters for software design. Whether its because developers on a project can change, or because design choices early on can hurt later on, being able to still make quick & effective changes to your software is what enables long-term success.
         "}
@@ -106,64 +151,65 @@ class Main < Element
             At what point does the pattern start to work against your current example.
           </li>
         </ul>
-        The first point is what we mostly focus on & for good reason, we should develop these ideas further. That being said, I {" don't"} believe its the primary cause of poor design. Rather its a lack of discipline in knowing when to stop following where the abstraction leads. This is also a form of ideology which limits your ability to see the beauty in what could be considered competeting design patterns.
+        The first point is what we mostly focus on & understandably. Design patterns & paradigms change the way we think about code/data, we should develop these ideas further. That being said, I {" don't"} believe its the primary cause of poor design. Rather its a lack of discipline in knowing when to stop following where the abstraction leads. This is also a form of ideology which limits your ability to see the beauty in what could be considered competeting design patterns.
       </p>
-      <h2 id="cognitive-load">{"# Cognitive Load"}</h2>
-      <p>
-        <a href="https://en.wikipedia.org/wiki/Cognitive_load" target="_blank">Cognitive load theory</a> {" "} shows us that our working memory is limited & more importantly that we can easily overload our working memory, which can turn into mild-to-extreme burnout. In practice I found this to mean that when I hit a wall I can easily conflate my failure to tackle the issue in one go with my inherent ability as a developer.
+      <h2 id="cognitive-load">Cognitive Load</h2>
+      <p class_name="indent">
+        <a href="https://en.wikipedia.org/wiki/Cognitive_load" target="_blank">Cognitive load theory</a> {" "} shows us that our working memory is limited & more importantly that we can easily overload our working memory. In certain cases this can turn into mild-to-extreme burnout. In practice I found this to mean that when I hit a wall I can easily conflate my failure to tackle the problem in one go with my inherent ability as a developer.
       </p>
       <p class_name="middle bold">
         This is wrong.
       </p>
       <p>
-        {"The takeaways I've learned is the following:"}
         <ul>
           <li>
-            Breaking large tasks down into small bite-sized chunks is a HUGE skill, & one that we do not talk about enough. It is not easy & it is life-changing.
+            Breaking large tasks down into small bite-sized chunks is a difficult skill, & one that we do not talk about enough. It is not easy & it is life-changing.
           </li>
           <li>
             Getting overwhelmed has nothing to do with your smartness! Say that again.
           </li>
         </ul>
       </p>
-      <h2 id="example">{"# Examples"}</h2>
-      <p>
+      <h2 id="example">Examples</h2>
+      <p class_name="indent">
         {"
         We'll take a look at 3 different examples to see how different abstractions affect cognitive load & maintainability.
         "}
       </p>
-      <h3 id="declarative-programming">{"# Declarative Programming"}</h3>
+      <h3 id="declarative-programming">Declarative Programming</h3>
       <p>
         {"
-        Let's take the common scrutinized example of Array.reduce vs a for loop
+        Let's take an example of transforming data between data types.
         "}
       </p>
 
-      <pre>
-        {"
-  // Array#reduce
-  const oldHeaders = [['Key', 'value'], ..];
+      <pre class_name="prettyprint">
+        {"const listHeaders = [['Key', 'value'], ..];"}
+      </pre>
 
-  oldHeaders.reduce((headers, ([key, value]) => 
+      <p>
+        The goal is to tranform the key-value list from above into a plain object.
+      </p>
+
+      <pre class_name="prettyprint">
+        {"
+  listHeaders.reduce((headers, ([key, value]) => 
     ({...headers, [key]: value })
   ));
         "}
       </pre>
-      <p class_name="middle">Verus</p>
-      <pre>
+      <p class_name="middle no-margin">Verus</p>
+      <pre class_name="prettyprint">
         {"
-  // regular old for loop
-  const oldHeaders = [['Key', 'value'], ..];
-
   const headers = {};
-  for (let [key, value] of oldHeaders) {
+  for (let [key, value] of listHeaders) {
     headers[key] = value;
   }
         "}
       </pre>
       <p>
         {"
-        This is a bit of a contrived example (because I can't think of a good use case for reduce..), but it is something I wrote before & felt very clever about it.
+        This is a bit of a contrived example, but it is a real-life example something I wrote before & felt very clever about it.
         "}
       </p>
       <p>
@@ -191,9 +237,7 @@ class Main < Element
             "}
           </li>
           <li>
-            {"
-            All done!
-            "}
+            {"All done!"}
           </li>
         </ol>
       </p>
@@ -220,19 +264,13 @@ class Main < Element
             Looks like {" I'll"} be getting the result of this in an object called "headers"
           </li>
           <li>
-            {"
-            Destructure key - value from oldHeaders (order matters!)
-            "}
+            {"Destructure key - value from oldHeaders (order matters!)"}
           </li>
           <li>
-            {"
-            Assign headers[key] to the value
-            "}
+            {"Assign headers[key] to the value"}
           </li>
           <li>
-            {"
-            All done!
-            "}
+            {"All done!"}
           </li>
         </ol>
       </p>

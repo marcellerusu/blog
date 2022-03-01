@@ -209,6 +209,7 @@ class Ampersand extends Token {}
 class PseudoClass extends Token {}
 class PseudoElement extends Token {}
 class Dot extends Token {}
+class Comma extends Token {}
 
 const tokenizeCSS = (str) => {
   const tokens = [];
@@ -220,6 +221,8 @@ const tokenizeCSS = (str) => {
       tokens.push(new Ampersand());
     } else if (scanner.scan(/\./)) {
       tokens.push(new Dot());
+    } else if (scanner.scan(/\,/)) {
+      tokens.push(new Comma());
     } else if (scanner.scan(/::([a-z]+)/)) {
       tokens.push(new PseudoElement(scanner.groups[0]));
     } else if (scanner.scan(/:([a-z]+)/)) {
@@ -289,6 +292,15 @@ class ClassSelectorNode extends AstNode {
   }
 }
 
+class MultipleIdentifierNode extends AstNode {
+  constructor(first_tag_name, second_tag_name, rules) {
+    super();
+    this.first_tag_name = first_tag_name;
+    this.second_tag_name = second_tag_name;
+    this.rules = rules;
+  }
+}
+
 class CSSParser {
   constructor(tokens, index = 0, end_token = null) {
     this.tokens = tokens;
@@ -302,6 +314,10 @@ class CSSParser {
 
   get peek() {
     return this.tokens[this.index + 1];
+  }
+
+  get peek_two() {
+    return this.tokens[this.index + 2];
   }
 
   clone(end_token = null) {
@@ -331,6 +347,12 @@ class CSSParser {
     while (this.can_parse()) {
       if (this.current.is(Dot) && this.peek?.is(IdentifierToken)) {
         ast.push(this.parse_class_selector());
+      } else if (
+        this.current.is(IdentifierToken) &&
+        this.peek?.is(Comma) &&
+        this.peek_two?.is(IdentifierToken)
+      ) {
+        ast.push(this.parse_multiple_identifier());
       } else if (this.current.is(Ampersand) && this.peek?.is(PseudoClass)) {
         ast.push(this.parse_child_pseudo_class_selector());
       } else if (this.current.is(Ampersand) && this.peek?.is(PseudoElement)) {
@@ -366,6 +388,18 @@ class CSSParser {
     this.consume_clone(cloned_parser);
     this.consume(CloseBrace);
     return new PseudoSelectorNode(selector, rules);
+  }
+
+  parse_multiple_identifier() {
+    const { value: first_tag_name } = this.consume(IdentifierToken);
+    this.consume(Comma);
+    const { value: second_tag_name } = this.consume(IdentifierToken);
+    this.consume(OpenBrace);
+    const cloned_parser = this.clone(CloseBrace);
+    const rules = cloned_parser.parse();
+    this.consume_clone(cloned_parser);
+    this.consume(CloseBrace);
+    return new MultipleIdentifierNode(first_tag_name, second_tag_name, rules);
   }
 
   parse_child_pseudo_element_selector() {
@@ -1557,6 +1591,25 @@ let pea_module;
 pea_module = Record.new([
 
 ], List.new([]));
+class CodeHighlighter extends Element {
+    constructor(...args) {super(...args);this.view = this.view.bind(this);this.init && this.init(...args);}
+  view(...params) {
+  return Schema.case(List.new(params),
+    List.new([
+      List.new([Schema.for(List.new([Schema.any(Sym.new("_56109")), Schema.any(Sym.new("_56110")), Schema.any(Sym.new("_56111"))])), ((__VALUE) => {
+    let _56109, _56110, _56111;
+    _56109 = __VALUE.__lookup__(Int.new(0));
+    _56110 = __VALUE.__lookup__(Int.new(1));
+    _56111 = __VALUE.__lookup__(Int.new(2));
+    return DomNode.new(Str.new(`script`), Record.new([
+      [Sym.new("src"), Str.new(`https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js`)]
+    ], List.new([])), List.new([]));
+  })])
+    ])
+  );
+}
+
+};
 class Main extends Element {
     constructor(...args) {super(...args);this.title = this.title.bind(this);
 this.style = this.style.bind(this);
@@ -1573,11 +1626,11 @@ this.view = this.view.bind(this);this.init && this.init(...args);}
 style(...params) {
   return Schema.case(List.new(params),
     List.new([
-      List.new([Schema.for(List.new([Schema.any(Sym.new("_15186")), Schema.any(Sym.new("_15187")), Schema.any(Sym.new("_15188"))])), ((__VALUE) => {
-    let _15186, _15187, _15188;
-    _15186 = __VALUE.__lookup__(Int.new(0));
-    _15187 = __VALUE.__lookup__(Int.new(1));
-    _15188 = __VALUE.__lookup__(Int.new(2));
+      List.new([Schema.for(List.new([Schema.any(Sym.new("_56112")), Schema.any(Sym.new("_56113")), Schema.any(Sym.new("_56114"))])), ((__VALUE) => {
+    let _56112, _56113, _56114;
+    _56112 = __VALUE.__lookup__(Int.new(0));
+    _56113 = __VALUE.__lookup__(Int.new(1));
+    _56114 = __VALUE.__lookup__(Int.new(2));
     return Str.new(`
     display: flex;
     flex-direction: column;
@@ -1602,12 +1655,27 @@ style(...params) {
     h1 {
       text-align: center;
     }
-    header {
-      display: flex;
-      justify-content: space-between;
+    h2 {
+      position: sticky;
+      top: 1.25em;
+      background: #f8f8ff;
+      width: 8em;
+      &::before {
+        content: '# ';
+      }
+    }
+    h3 {
+      position: sticky;
+      top: 3.75em;
+      background: #f8f8ff;
+      width: 14em;
+      &::before {
+        content: '## ';
+      }
     }
     p {
       font-weight: bolder;
+      margin: 0.4em;
     }
     pre {
       width: 60%;
@@ -1621,6 +1689,27 @@ style(...params) {
       font-weight: 1000;
       font-size: 1.5em;
     }
+    header {
+      background: #f8f8ffee;
+      width: calc(100vw - 4em);
+      position: sticky;
+      margin-left: -2em;
+      padding-left: 2em;
+      padding-right: 2em;
+      left: 0;
+      top: 0;
+      .name-and-date {
+        padding-top: 1em;
+        display: flex;
+        justify-content: space-between;
+      }
+    }
+    .no-margin {
+      margin: 0;
+    }
+    .indent {
+      text-indent: 2em;
+    }
   `);
   })])
     ])
@@ -1629,27 +1718,31 @@ style(...params) {
 view(...params) {
   return Schema.case(List.new(params),
     List.new([
-      List.new([Schema.for(List.new([Schema.any(Sym.new("_15189")), Schema.any(Sym.new("_15190")), Schema.any(Sym.new("_15191"))])), ((__VALUE) => {
-    let _15189, _15190, _15191;
-    _15189 = __VALUE.__lookup__(Int.new(0));
-    _15190 = __VALUE.__lookup__(Int.new(1));
-    _15191 = __VALUE.__lookup__(Int.new(2));
+      List.new([Schema.for(List.new([Schema.any(Sym.new("_56115")), Schema.any(Sym.new("_56116")), Schema.any(Sym.new("_56117"))])), ((__VALUE) => {
+    let _56115, _56116, _56117;
+    _56115 = __VALUE.__lookup__(Int.new(0));
+    _56116 = __VALUE.__lookup__(Int.new(1));
+    _56117 = __VALUE.__lookup__(Int.new(2));
     return DomNode.new(Str.new(`div`), Record.new([
 
+    ], List.new([])), List.new([CodeHighlighter.new(Record.new([
+
+    ], List.new([]))), DomNode.new(Str.new(`header`), Record.new([
+      [Sym.new("class_name"), Str.new(`header`)]
     ], List.new([])), List.new([DomNode.new(Str.new(`h1`), Record.new([
 
-    ], List.new([])), List.new([DomTextNode.new(Str.new(`The Cost of Abstraction`))])), DomNode.new(Str.new(`header`), Record.new([
-
+    ], List.new([])), List.new([DomTextNode.new(Str.new(`The Cost of Abstraction`))])), DomNode.new(Str.new(`div`), Record.new([
+      [Sym.new("class_name"), Str.new(`name-and-date`)]
     ], List.new([])), List.new([DomNode.new(Str.new(`div`), Record.new([
       [Sym.new("class_name"), Str.new(`date`)]
     ], List.new([])), List.new([Str.new(`February 28, 2022`)])), DomNode.new(Str.new(`div`), Record.new([
 
     ], List.new([])), List.new([DomTextNode.new(Str.new(`Marcelle Rusu`))]))])), DomNode.new(Str.new(`hr`), Record.new([
 
-    ], List.new([])), List.new([])), DomNode.new(Str.new(`p`), Record.new([
-
+    ], List.new([])), List.new([]))])), DomNode.new(Str.new(`p`), Record.new([
+      [Sym.new("class_name"), Str.new(`indent`)]
     ], List.new([])), List.new([Str.new(`
-        Programming is hard to get right. This is a fact we should embrace, & not try to hide.
+        Programming is hard to get right. Sometimes we can effectively minimize complexity by finding shared patterns. Other times we just hide the complexity but it doesn't go away.
         `)])), DomNode.new(Str.new(`p`), Record.new([
 
     ], List.new([])), List.new([Str.new(`
@@ -1660,8 +1753,8 @@ view(...params) {
         When you face an issue in your code - something is duplicated, something is 'gross' (TODO), etc. I argue the prime goal is to create maintainable code. To me, this means ease to understand AND update. 
         `)])), DomNode.new(Str.new(`h2`), Record.new([
       [Sym.new("id"), Str.new(`maintainable`)]
-    ], List.new([])), List.new([Str.new(`# Maintainable`)])), DomNode.new(Str.new(`p`), Record.new([
-
+    ], List.new([])), List.new([DomTextNode.new(Str.new(`Maintainable`))])), DomNode.new(Str.new(`p`), Record.new([
+      [Sym.new("class_name"), Str.new(`indent`)]
     ], List.new([])), List.new([Str.new(`
         We all know that maintainability matters for software design. Whether its because developers on a project can change, or because design choices early on can hurt later on, being able to still make quick & effective changes to your software is what enables long-term success.
         `)])), DomNode.new(Str.new(`p`), Record.new([
@@ -1686,60 +1779,58 @@ view(...params) {
 
     ], List.new([])), List.new([DomTextNode.new(Str.new(`Etc.`))]))]))])), DomNode.new(Str.new(`li`), Record.new([
 
-    ], List.new([])), List.new([DomTextNode.new(Str.new(`At what point does the pattern start to work against your current example.`))]))])), DomTextNode.new(Str.new(`The first point is what we mostly focus on & for good reason, we should develop these ideas further. That being said, I`)), Str.new(` don't`), DomTextNode.new(Str.new(`believe its the primary cause of poor design. Rather its a lack of discipline in knowing when to stop following where the abstraction leads. This is also a form of ideology which limits your ability to see the beauty in what could be considered competeting design patterns.`))])), DomNode.new(Str.new(`h2`), Record.new([
+    ], List.new([])), List.new([DomTextNode.new(Str.new(`At what point does the pattern start to work against your current example.`))]))])), DomTextNode.new(Str.new(`The first point is what we mostly focus on & understandably. Design patterns & paradigms change the way we think about code/data, we should develop these ideas further. That being said, I`)), Str.new(` don't`), DomTextNode.new(Str.new(`believe its the primary cause of poor design. Rather its a lack of discipline in knowing when to stop following where the abstraction leads. This is also a form of ideology which limits your ability to see the beauty in what could be considered competeting design patterns.`))])), DomNode.new(Str.new(`h2`), Record.new([
       [Sym.new("id"), Str.new(`cognitive-load`)]
-    ], List.new([])), List.new([Str.new(`# Cognitive Load`)])), DomNode.new(Str.new(`p`), Record.new([
-
+    ], List.new([])), List.new([DomTextNode.new(Str.new(`Cognitive Load`))])), DomNode.new(Str.new(`p`), Record.new([
+      [Sym.new("class_name"), Str.new(`indent`)]
     ], List.new([])), List.new([DomNode.new(Str.new(`a`), Record.new([
       [Sym.new("href"), Str.new(`https://en.wikipedia.org/wiki/Cognitive_load`)],
       [Sym.new("target"), Str.new(`_blank`)]
-    ], List.new([])), List.new([DomTextNode.new(Str.new(`Cognitive load theory`))])), Str.new(` `), DomTextNode.new(Str.new(`shows us that our working memory is limited & more importantly that we can easily overload our working memory, which can turn into mild-to-extreme burnout. In practice I found this to mean that when I hit a wall I can easily conflate my failure to tackle the issue in one go with my inherent ability as a developer.`))])), DomNode.new(Str.new(`p`), Record.new([
+    ], List.new([])), List.new([DomTextNode.new(Str.new(`Cognitive load theory`))])), Str.new(` `), DomTextNode.new(Str.new(`shows us that our working memory is limited & more importantly that we can easily overload our working memory. In certain cases this can turn into mild-to-extreme burnout. In practice I found this to mean that when I hit a wall I can easily conflate my failure to tackle the problem in one go with my inherent ability as a developer.`))])), DomNode.new(Str.new(`p`), Record.new([
       [Sym.new("class_name"), Str.new(`middle bold`)]
     ], List.new([])), List.new([DomTextNode.new(Str.new(`This is wrong.`))])), DomNode.new(Str.new(`p`), Record.new([
 
-    ], List.new([])), List.new([Str.new(`The takeaways I've learned is the following:`), DomNode.new(Str.new(`ul`), Record.new([
+    ], List.new([])), List.new([DomNode.new(Str.new(`ul`), Record.new([
 
     ], List.new([])), List.new([DomNode.new(Str.new(`li`), Record.new([
 
-    ], List.new([])), List.new([DomTextNode.new(Str.new(`Breaking large tasks down into small bite-sized chunks is a HUGE skill, & one that we do not talk about enough. It is not easy & it is life-changing.`))])), DomNode.new(Str.new(`li`), Record.new([
+    ], List.new([])), List.new([DomTextNode.new(Str.new(`Breaking large tasks down into small bite-sized chunks is a difficult skill, & one that we do not talk about enough. It is not easy & it is life-changing.`))])), DomNode.new(Str.new(`li`), Record.new([
 
     ], List.new([])), List.new([DomTextNode.new(Str.new(`Getting overwhelmed has nothing to do with your smartness! Say that again.`))]))]))])), DomNode.new(Str.new(`h2`), Record.new([
       [Sym.new("id"), Str.new(`example`)]
-    ], List.new([])), List.new([Str.new(`# Examples`)])), DomNode.new(Str.new(`p`), Record.new([
-
+    ], List.new([])), List.new([DomTextNode.new(Str.new(`Examples`))])), DomNode.new(Str.new(`p`), Record.new([
+      [Sym.new("class_name"), Str.new(`indent`)]
     ], List.new([])), List.new([Str.new(`
         We'll take a look at 3 different examples to see how different abstractions affect cognitive load & maintainability.
         `)])), DomNode.new(Str.new(`h3`), Record.new([
       [Sym.new("id"), Str.new(`declarative-programming`)]
-    ], List.new([])), List.new([Str.new(`# Declarative Programming`)])), DomNode.new(Str.new(`p`), Record.new([
+    ], List.new([])), List.new([DomTextNode.new(Str.new(`Declarative Programming`))])), DomNode.new(Str.new(`p`), Record.new([
 
     ], List.new([])), List.new([Str.new(`
-        Let's take the common scrutinized example of Array.reduce vs a for loop
+        Let's take an example of transforming data between data types.
         `)])), DomNode.new(Str.new(`pre`), Record.new([
+      [Sym.new("class_name"), Str.new(`prettyprint`)]
+    ], List.new([])), List.new([Str.new(`const listHeaders = [['Key', 'value'], ..];`)])), DomNode.new(Str.new(`p`), Record.new([
 
+    ], List.new([])), List.new([DomTextNode.new(Str.new(`The goal is to tranform the key-value list from above into a plain object.`))])), DomNode.new(Str.new(`pre`), Record.new([
+      [Sym.new("class_name"), Str.new(`prettyprint`)]
     ], List.new([])), List.new([Str.new(`
-  // Array#reduce
-  const oldHeaders = [['Key', 'value'], ..];
-
-  oldHeaders.reduce((headers, ([key, value]) => 
+  listHeaders.reduce((headers, ([key, value]) => 
     ({...headers, [key]: value })
   ));
         `)])), DomNode.new(Str.new(`p`), Record.new([
-      [Sym.new("class_name"), Str.new(`middle`)]
+      [Sym.new("class_name"), Str.new(`middle no-margin`)]
     ], List.new([])), List.new([DomTextNode.new(Str.new(`Verus`))])), DomNode.new(Str.new(`pre`), Record.new([
-
+      [Sym.new("class_name"), Str.new(`prettyprint`)]
     ], List.new([])), List.new([Str.new(`
-  // regular old for loop
-  const oldHeaders = [['Key', 'value'], ..];
-
   const headers = {};
-  for (let [key, value] of oldHeaders) {
+  for (let [key, value] of listHeaders) {
     headers[key] = value;
   }
         `)])), DomNode.new(Str.new(`p`), Record.new([
 
     ], List.new([])), List.new([Str.new(`
-        This is a bit of a contrived example (because I can't think of a good use case for reduce..), but it is something I wrote before & felt very clever about it.
+        This is a bit of a contrived example, but it is a real-life example something I wrote before & felt very clever about it.
         `)])), DomNode.new(Str.new(`p`), Record.new([
 
     ], List.new([])), List.new([DomTextNode.new(Str.new(`I want to tackle this not in a design principles way, but with cognitive load in mind.`))])), DomNode.new(Str.new(`p`), Record.new([
@@ -1762,9 +1853,7 @@ view(...params) {
             Spreading has order in it, so always make sure to spread first or else your new value could get overridden.
             `)])), DomNode.new(Str.new(`li`), Record.new([
 
-    ], List.new([])), List.new([Str.new(`
-            All done!
-            `)]))]))])), DomNode.new(Str.new(`p`), Record.new([
+    ], List.new([])), List.new([Str.new(`All done!`)]))]))])), DomNode.new(Str.new(`p`), Record.new([
 
     ], List.new([])), List.new([Str.new(`
         I'll admit some of this is a bit trivial, but I think it's worth mentioning. 
@@ -1784,17 +1873,11 @@ view(...params) {
 
     ], List.new([])), List.new([DomTextNode.new(Str.new(`Looks like`)), Str.new(` I'll`), DomTextNode.new(Str.new(`be getting the result of this in an object called headers`))])), DomNode.new(Str.new(`li`), Record.new([
 
-    ], List.new([])), List.new([Str.new(`
-            Destructure key - value from oldHeaders (order matters!)
-            `)])), DomNode.new(Str.new(`li`), Record.new([
+    ], List.new([])), List.new([Str.new(`Destructure key - value from oldHeaders (order matters!)`)])), DomNode.new(Str.new(`li`), Record.new([
 
-    ], List.new([])), List.new([Str.new(`
-            Assign headers[key] to the value
-            `)])), DomNode.new(Str.new(`li`), Record.new([
+    ], List.new([])), List.new([Str.new(`Assign headers[key] to the value`)])), DomNode.new(Str.new(`li`), Record.new([
 
-    ], List.new([])), List.new([Str.new(`
-            All done!
-            `)]))]))])), DomNode.new(Str.new(`p`), Record.new([
+    ], List.new([])), List.new([Str.new(`All done!`)]))]))])), DomNode.new(Str.new(`p`), Record.new([
 
     ], List.new([])), List.new([DomTextNode.new(Str.new(`The biggest issue with declarative programming is exactly what sold me on it. You have to have the entire problem in your head to be able to start writing it. Likewise, you have to have the entire piece of code in your head before you can begin to understand it.`))])), DomNode.new(Str.new(`p`), Record.new([
 
